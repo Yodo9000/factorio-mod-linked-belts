@@ -1,0 +1,61 @@
+Version: 0.0.11
+Date: 2022-09-11
+By: Khalcifer
+  Changes:
+    - Fixed the issue with missing graphics belt after the K2SE update
+---------------------------------------------------------------------------------------------------
+Version: 0.0.10
+Date: 2022-09-04
+By: Cordina
+  Changes:
+    - Added support for belts from Space Exploration and Krastorio2 (thanks to staplergun)
+---------------------------------------------------------------------------------------------------
+Version: 0.0.9
+Date: 2022-03-13
+By: Cordina
+  Changes:
+    - Added support for belts from Bob's Logistics (tier 0 to 5)
+---------------------------------------------------------------------------------------------------
+Version: 0.0.8
+Date: 2020-12-21
+  Changes:
+    - Added lines between linked belts on selection
+---------------------------------------------------------------------------------------------------
+Version: 0.0.7
+Date: 2020-12-20
+  Changes:
+    - Fixed the issue when the linked belt has already connection; problem with fast replacement (fast replacement disabled)
+---------------------------------------------------------------------------------------------------
+Version: 0.0.6
+Date: 2020-12-20
+  Changes:
+    - Probably fixed the issue when the linked belt has already connection
+---------------------------------------------------------------------------------------------------
+Version: 0.0.5
+Date: 2020-12-19
+  Changes:
+    - Added EN locale for fast and express linked belts
+---------------------------------------------------------------------------------------------------
+Version: 0.0.4
+Date: 2020-12-19
+  Changes:
+    - The code was reworked
+    - Linked belts are separated by types
+    - Added sprite for not connected input linked belts
+    - Added temporary (10 s) line between connected linked belts
+---------------------------------------------------------------------------------------------------
+Version: 0.0.3
+Date: 2020-12-18
+  Changes:
+    - Added dependency: base >= 1.1.6
+    - Added fast and express linked belts
+---------------------------------------------------------------------------------------------------
+Version: 0.0.2
+Date: 2020-12-15
+  Changes:
+    - Fixed wrong name
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1
+Date: 2020-12-15
+  Changes:
+    - First release

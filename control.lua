@@ -1,24 +1,24 @@
 
 script.on_init(function(data)
-	global.players = {}
+	storage.players = {} --for storing mod data per player
 end)
 
 
 script.on_event(defines.events.on_built_entity, function(event)
-	local entity = event.created_entity
+	local entity = event.entity
 	local player_index = event.player_index
 	if entity.type == "linked-belt" then
 		
 		local name = entity.name
 		
-		if not global.players[player_index] then
-			global.players[player_index] = {}
+		if not storage.players[player_index] then
+			storage.players[player_index] = {}
 		end
-		if not global.players[player_index][name] then
-			global.players[player_index][name] = {}
+		if not storage.players[player_index][name] then
+			storage.players[player_index][name] = {}
 		end
 		
-		local handler = global.players[player_index][name] -- unique for player and linked belt
+		local handler = storage.players[player_index][name] -- unique for player and linked belt
 		
 		if (handler.last_belt and handler.last_belt.valid) 
 			and not (entity.linked_belt_neighbour) -- sometimes already linked 0_o

@@ -1,18 +1,22 @@
+---------------------------------------------------------------------------------------------------
 Version: 0.0.11
 Date: 2022-09-11
-By: Khalcifer
+  By:
+    - Khalcifer
   Changes:
     - Fixed the issue with missing graphics belt after the K2SE update
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.10
 Date: 2022-09-04
-By: Cordina
+  By:
+    - Cordina
   Changes:
     - Added support for belts from Space Exploration and Krastorio2 (thanks to staplergun)
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.9
 Date: 2022-03-13
-By: Cordina
+  By:
+    - Cordina
   Changes:
     - Added support for belts from Bob's Logistics (tier 0 to 5)
 ---------------------------------------------------------------------------------------------------

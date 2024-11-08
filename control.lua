@@ -28,7 +28,7 @@ script.on_event(defines.events.on_built_entity, function(event)
 			handler.last_belt.linked_belt_type = "input"
 			entity.linked_belt_type = "output"
 			entity.connect_linked_belts(handler.last_belt)
-			rendering.destroy(handler.rid)
+			--rendering.destroy(handler.rid) -- I'm not sure what this is supposed to do, destroy a LuaRendering/LuaRenderObject before creating any? So I removed it.
 			if entity.surface == handler.last_belt.surface then
 				rendering.draw_line{
 					color={1,1,1},

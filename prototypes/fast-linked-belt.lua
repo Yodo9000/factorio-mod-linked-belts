@@ -56,11 +56,8 @@ local recipe = {
   type = "recipe",
   name = name,
   enabled = false,
-  ingredients = {
-    {ingredient, 2}
-  },
-  result = name,
-  result_count = 2
+  ingredients = {{type="item", name=ingredient, amount=2}},
+  results     = {{type="item", name=name, amount=2}}
 }
 
 table.insert (data.raw.technology[technology].effects, 

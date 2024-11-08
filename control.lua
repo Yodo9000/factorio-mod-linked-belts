@@ -28,7 +28,7 @@ script.on_event(defines.events.on_built_entity, function(event)
 			handler.last_belt.linked_belt_type = "input"
 			entity.linked_belt_type = "output"
 			entity.connect_linked_belts(handler.last_belt)
-			--rendering.destroy(handler.rid) -- I'm not sure what this is supposed to do, destroy a LuaRendering/LuaRenderObject before creating any? So I removed it.
+			handler.render_obj.destroy() -- destroy the warning that the linked-belt is not linked yet.
 			if entity.surface == handler.last_belt.surface then
 				rendering.draw_line{
 					color={1,1,1},
@@ -42,12 +42,12 @@ script.on_event(defines.events.on_built_entity, function(event)
 				}
 			end
 			handler.last_belt=nil
-			handler.rid=nil
+			handler.render_obj=nil
 		elseif not (entity.linked_belt_neighbour) then
 			-- first linked belt
 			entity.linked_belt_type = "input"
 			handler.last_belt = entity
-			handler.rid = rendering.draw_sprite{
+			handler.render_obj = rendering.draw_sprite{
 				target=entity,
 				sprite="utility/crafting_machine_recipe_not_unlocked",
 				surface=entity.surface,

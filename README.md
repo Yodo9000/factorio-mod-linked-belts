@@ -1,4 +1,4 @@
-See <https://mods.factorio.com/mod/LinkedBelts>
+See <https://mods.factorio.com/mod/LinkedBelts> for releases.
 
 #### Example setups:
 <img src="https://i.imgur.com/tpBeufd.gif" width="200"/>

@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2024-11-09
+  By:
+    - EMeindertsma
+  Planned changes:
+    - Rewrote code to make it work with any mod that adds a new tier of underground belts
+---------------------------------------------------------------------------------------------------
 Version: 0.0.12
 Date: 2024-11-09
   By:

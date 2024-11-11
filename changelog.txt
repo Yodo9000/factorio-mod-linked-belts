@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.12
+Date: 2024-11-09
+  By:
+    - EMeindertsma
+  Changes:
+    - Updated to base Factorio 2.0, other mods are not supported yet
+    - Linked-belt graphics are bugged
+---------------------------------------------------------------------------------------------------
 Version: 0.0.11
 Date: 2022-09-11
   By:

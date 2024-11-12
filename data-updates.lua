@@ -7,6 +7,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
   prototype_copy.hidden_in_factoriopedia = true --need to change description etc if visible in Factoriopeida
   --prototype_copy.belt_animation_set.animation_set.tint = tint --only tints belt
   prototype_copy.underground_sprite.tint = tint -- doesn't work, need to deal with .structure which is a Sprite4Way
+  prototype_copy.localised_name = {"", "Linked ", {"entity-name."..prototype.name}}--need to get from locale file of original, and change
 
   local item = {
     type = "item",
@@ -16,7 +17,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
     subgroup = "belt",
     order = prototype_copy.order, -- need to get from original, maybe change?
     place_result = prototype_copy.name,
-    stack_size = 10
+    stack_size = 10,
   }
   if prototype_copy.icons then
     item.icons = prototype_copy.icons
@@ -29,7 +30,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
   local recipe = {
     type = "recipe",
     name = prototype_copy.name,
-    enabled = false, -- is_enabled_at_game_start
+    enabled = false, -- is_enabled_at_game_start is a more descriptive name
     ingredients = {{type="item", name=prototype.name, amount=2}},
     results     = {{type="item", name=prototype_copy.name, amount=2}}
   }

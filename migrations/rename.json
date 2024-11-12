@@ -1,1 +1,24 @@
-Todo
+{
+  "entity":
+  [
+    ["fast-linked-belt", "linked-fast-underground-belt"], 
+    ["express-linked-belt", "linked-express-underground-belt"], 
+    ["basic-linked-belt", "linked-basic-underground-belt"], 
+    ["turbo-linked-belt", "linked-turbo-underground-belt"],
+    ["ultimate-linked-belt", "linked-ultimate-underground-belt"],
+    ["advanced-linked-belt", "linked-advanced-underground-belt"], 
+    ["superior-linked-belt", "linked-superior-underground-belt"], 
+    ["space-linked-belt", "linked-space-underground-belt"]
+  ],
+  "item":
+  [
+    ["fast-linked-belt", "linked-fast-underground-belt"], 
+    ["express-linked-belt", "linked-express-underground-belt"], 
+    ["basic-linked-belt", "linked-basic-underground-belt"], 
+    ["turbo-linked-belt", "linked-turbo-underground-belt"],
+    ["ultimate-linked-belt", "linked-ultimate-underground-belt"],
+    ["advanced-linked-belt", "linked-advanced-underground-belt"], 
+    ["superior-linked-belt", "linked-superior-underground-belt"], 
+    ["space-linked-belt", "linked-space-underground-belt"]
+  ]
+}

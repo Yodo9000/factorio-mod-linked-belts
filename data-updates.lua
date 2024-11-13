@@ -1,4 +1,4 @@
-local tint = {0.8, 0.8, 0.8} -- to recolor the items and entities need to improve
+local tint = {0.65, 0.65, 0.65} -- to recolor the items and entities, need to improve
 
 for _, prototype in pairs(data.raw["underground-belt"]) do
   local prototype_copy = util.table.deepcopy(prototype)

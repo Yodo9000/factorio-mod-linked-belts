@@ -1,13 +1,14 @@
-local tint = {0.8, 0.8, 0.8, 0.2} -- to recolor the items and entities need to improve
+local tint = {0.8, 0.8, 0.8} -- to recolor the items and entities need to improve
 
 for _, prototype in pairs(data.raw["underground-belt"]) do
   local prototype_copy = util.table.deepcopy(prototype)
   prototype_copy.type = "linked-belt"
   prototype_copy.name = "linked-"..prototype.name --need to add migration for old names
   prototype_copy.hidden_in_factoriopedia = true --need to change description etc if visible in Factoriopeida
-  --prototype_copy.belt_animation_set.animation_set.tint = tint --only tints belt
-  prototype_copy.underground_sprite.tint = tint -- doesn't work, need to deal with .structure which is a Sprite4Way
-  prototype_copy.localised_name = {"", "Linked ", {"entity-name."..prototype.name}}--need to get from locale file of original, and change
+  prototype_copy.localised_name = {"entity-name.linked-belts", {"entity-name."..prototype.name}} -- has extra capitalisation
+  for _, sprite_4_way in pairs(prototype_copy.structure) do --should maybe be a bit more general to deal with differently defined sprites
+    sprite_4_way.sheet.tint = tint
+  end
 
   local item = {
     type = "item",

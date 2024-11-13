@@ -16,7 +16,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
     icon_size = 64,
     icon_mipmaps = 4,
     subgroup = "belt",
-    order = prototype_copy.order, -- need to get from original, maybe change?
+    order = "e"..string.sub(data.raw["item"][string.format("%s", prototype.name)].order, 2, -1), -- get order from original, and replace b with e 
     place_result = prototype_copy.name,
     stack_size = 10,
   }

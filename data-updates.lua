@@ -28,7 +28,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
   end
   
 
-  local recipe = {
+  local recipe = { --doesn't display properly in-game? also need to add unlock
     type = "recipe",
     name = prototype_copy.name,
     enabled = false, -- is_enabled_at_game_start is a more descriptive name

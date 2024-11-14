@@ -6,6 +6,10 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
   prototype_copy.name = "linked-"..prototype.name
   prototype_copy.hidden_in_factoriopedia = true -- I'm not sure if this works. Need to change description etc if visible in Factoriopedia
   prototype_copy.minable.result = prototype_copy.name
+  prototype_copy.fast_replaceable_group = "linked-belt"
+  if prototype.next_upgrade then
+    prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade -- doesn't replace other side of the link though
+  end
   prototype_copy.localised_name = {"entity-name.linked-belts", {"entity-name."..prototype.name}} -- has extra capitalisation
   for _, sprite_4_way in pairs(prototype_copy.structure) do -- should maybe be a bit more general to deal with differently defined sprites
     sprite_4_way.sheet.tint = tint
@@ -27,7 +31,6 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
   else
     item.icons = {{icon=prototype_copy.icon, tint=tint}}
   end
-  
 
   local recipe = { -- doesn't display properly in-game? also need to add unlock
     type = "recipe",

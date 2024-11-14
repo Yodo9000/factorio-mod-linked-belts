@@ -56,7 +56,8 @@ script.on_event(defines.events.on_built_entity, function(event)
 				x_scale=0.6, y_scale=0.6
 			}
 		else -- fast replace
-			game.print ('fast replace')
+			game.print('fast replace')
+			--todo
 		end
 	end
 end)

@@ -14,23 +14,26 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
   for _, sprite_4_way in pairs(prototype_copy.structure) do -- should maybe be a bit more general to deal with differently defined sprites
     sprite_4_way.sheet.tint = tint
   end
+  -- need to tint entity icon for upgrade planners:
+  if prototype.icons then
+    for _, icon in pairs(prototype_copy.icons) do
+      icon.tint = tint
+    end
+  else
+    prototype_copy.icons = {{icon=prototype.icon, tint=tint}}
+  end
 
   local item = {
     type = "item",
     name = prototype_copy.name,
     icon_size = 64,
     icon_mipmaps = 4,
+    icons = prototype_copy.icons,
     subgroup = "belt",
     order = "e"..string.sub(data.raw["item"][string.format("%s", prototype.name)].order, 2, -1), -- get order from original, and replace b with e 
     place_result = prototype_copy.name,
     stack_size = 10,
   }
-  if prototype_copy.icons then
-    item.icons = prototype_copy.icons
-    item.icons.tint = tint
-  else
-    item.icons = {{icon=prototype_copy.icon, tint=tint}}
-  end
 
   local recipe = { -- doesn't display properly in-game? also need to add unlock
     type = "recipe",

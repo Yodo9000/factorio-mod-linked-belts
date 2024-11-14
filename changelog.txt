@@ -11,8 +11,6 @@ Date: 2024-11-09
     - Graphics are now automatically generated.
   Modding:
     - Renamed all linked belts to start with "linked-" together with the name of the normal underground.
-  Todo:
-    - Make the linked belts unlockable with research
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.12
 Date: 2024-11-09

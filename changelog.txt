@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2024-11-09
+  By:
+    - EMeindertsma
+  Changes:
+    - Will now add linked belts for almost all mods that add a new tier of underground. (Major code rework)
+  Locale:
+    - Added Dutch locale
+  Graphics:
+    - Graphics are now automatically generated.
+  Modding:
+    - Renamed all linked belts to start with "linked-" together with the name of the normal underground.
+---------------------------------------------------------------------------------------------------
 Version: 0.0.12
 Date: 2024-11-09
   By:

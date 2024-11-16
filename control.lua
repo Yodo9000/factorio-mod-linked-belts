@@ -91,3 +91,20 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 		end
 	end
 end)
+
+-- By heinwintoe
+script.on_event(defines.events.on_player_mined_entity, function(event) -- should also be called for .on_robot_mined_entity (and .on_space_platform_mined_entity?)
+    local player_index = event.player_index
+    local player = game.players[player_index]
+    local entity = player.selected
+    if entity and entity.valid then
+        if entity.type == "linked-belt" then
+            local lbn = entity.linked_belt_neighbour
+            if lbn and lbn.surface == entity.surface then
+                --Mark linked belt neighbour for deconstruction
+                lbn.order_deconstruction(lbn.force, player)
+            end
+        end
+    end
+
+end)

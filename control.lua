@@ -20,10 +20,7 @@ script.on_event(defines.events.on_built_entity, function(event)
 		
 		local handler = storage.players[player_index][name] -- unique for player and linked belt
 		
-		if (handler.last_belt and handler.last_belt.valid) 
-			and not (entity.linked_belt_neighbour) -- sometimes already linked 0_o
-			then
-			
+		if (handler.last_belt and handler.last_belt.valid) and not (entity.linked_belt_neighbour) then -- sometimes already linked 0_o
 			-- second linked belt
 			handler.last_belt.linked_belt_type = "input"
 			entity.linked_belt_type = "output"
@@ -55,9 +52,14 @@ script.on_event(defines.events.on_built_entity, function(event)
 				only_in_alt_mode=true,
 				x_scale=0.6, y_scale=0.6
 			}
-		else -- fast replace
-			game.print('fast replace')
-			--todo
+		else -- fast replace or upgrade or instant-blueprint-building
+			game.print('fast replace or upgrade or paste')
+			game.print(entity.name)
+			game.print(entity.linked_belt_neighbour.name)
+			local link_entity = entity.linked_belt_neighbour
+			if link_entity.name ~= entity.name then
+				game.print(link_entity.surface.create_entity{name=entity.name, position=link_entity.position, direction=link_entity.direction, fast_replaceable=true, player=player_index}) -- works for paste, but not if entity has been upgraded
+			end
 		end
 	end
 end)
@@ -88,11 +90,4 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 			end
 		end
 	end
-	
 end)
-
-
-
-
-
-

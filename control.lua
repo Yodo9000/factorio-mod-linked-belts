@@ -1,3 +1,29 @@
+local function draw_blocked(entity)
+	return rendering.draw_sprite{
+		target=entity,
+		sprite="utility/crafting_machine_recipe_not_unlocked",
+		surface=entity.surface,
+		forces={entity.force.name},
+		only_in_alt_mode=true,
+		x_scale=0.6, y_scale=0.6
+	}
+end
+
+local function mark_lbn_for_deconstruction(event) -- By heinwintoe
+	game.print(event.name) -- event id
+    local entity = event.entity
+    if entity and entity.valid then
+        if entity.type == "linked-belt" then
+            local lbn = entity.linked_belt_neighbour
+            if lbn then
+                --Mark linked belt neighbour for deconstruction
+                lbn.order_deconstruction(lbn.force, event.player_index)
+			else
+				draw_blocked(entity) --might be superfluous
+			end
+        end
+    end
+end
 
 script.on_init(function(data)
 	storage.players = {} --for storing mod data per player
@@ -20,7 +46,7 @@ script.on_event(defines.events.on_built_entity, function(event)
 		
 		local handler = storage.players[player_index][name] -- unique for player and linked belt tier
 		
-		if (handler.last_belt and handler.last_belt.valid) and not (entity.linked_belt_neighbour) then -- sometimes already linked 0_o
+		if handler.last_belt and handler.last_belt.valid and not entity.linked_belt_neighbour then -- sometimes already linked 0_o
 			-- second linked belt
 			handler.last_belt.linked_belt_type = "input"
 			entity.linked_belt_type = "output"
@@ -40,7 +66,7 @@ script.on_event(defines.events.on_built_entity, function(event)
 			end
 			handler.last_belt=nil
 			handler.render_obj=nil
-		elseif not (entity.linked_belt_neighbour) then
+		elseif not entity.linked_belt_neighbour then
 			-- first linked belt
 			entity.linked_belt_type = "input"
 			handler.last_belt = entity
@@ -50,7 +76,8 @@ script.on_event(defines.events.on_built_entity, function(event)
 				surface=entity.surface,
 				forces={entity.force.name},
 				only_in_alt_mode=true,
-				x_scale=0.6, y_scale=0.6
+				x_scale=0.6, y_scale=0.6,
+				tint = {b=1} -- to mark that it is ready to link
 			}
 		else -- fast replace or upgrade or instant-blueprint-building
 			game.print('fast replace or upgrade or paste')
@@ -92,31 +119,21 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 	end
 end)
 
--- By heinwintoe:
-local function mark_lbn_for_deconstruction(event)
-    local entity = event.entity
-    if entity and entity.valid then
-        if entity.type == "linked-belt" then
-            local lbn = entity.linked_belt_neighbour
-            if lbn then
-                --Mark linked belt neighbour for deconstruction
-                lbn.order_deconstruction(lbn.force, event.player_index, 1)
-            end
-        end
-    end
-end
-
-script.on_event(defines.events.on_player_mined_entity, mark_lbn_for_deconstruction) -- should also be called for .on_space_platform_mined_entity ?
+script.on_event(defines.events.on_player_mined_entity, mark_lbn_for_deconstruction) -- doesn't undo properly
 script.on_event(defines.events.on_marked_for_deconstruction, mark_lbn_for_deconstruction)
-script.on_event(defines.events.on_robot_mined_entity, mark_lbn_for_deconstruction) -- no player involved!
+script.on_event(defines.events.on_robot_mined_entity, mark_lbn_for_deconstruction) -- doesn't undo properly, no player involved!
+ -- should also be called for .on_space_platform_mined_entity ?
 
-script.on_event(defines.events.on_cancelled_deconstruction, function(event)
+script.on_event(defines.events.on_cancelled_deconstruction, function(event) 
+	game.print(event.name) -- event id
 	local entity = event.entity
 	if entity and entity.valid then
         if entity.type == "linked-belt" then
             local lbn = entity.linked_belt_neighbour
             if lbn then
                 lbn.cancel_deconstruction(lbn.force, event.player_index)
+			else
+				draw_blocked(entity)
             end
         end
     end

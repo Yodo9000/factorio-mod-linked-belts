@@ -10,7 +10,7 @@ local function draw_blocked(entity)
 end
 
 local function mark_lbn_for_deconstruction(event) -- By heinwintoe
-	game.print(event.name) -- event id
+	--game.print(event.name) -- event id
     local entity = event.entity
     if entity and entity.valid then
         if entity.type == "linked-belt" then
@@ -79,14 +79,14 @@ script.on_event(defines.events.on_built_entity, function(event)
 				x_scale=0.6, y_scale=0.6,
 				tint = {b=1} -- to mark that it is ready to link
 			}
-		else -- fast replace or upgrade or instant-blueprint-building
+		else --[[ fast replace or upgrade or instant-blueprint-building
 			game.print('fast replace or upgrade or paste')
 			game.print(entity.name)
 			game.print(entity.linked_belt_neighbour.name)
 			local link_entity = entity.linked_belt_neighbour
 			if link_entity.name ~= entity.name then
 				game.print(link_entity.surface.create_entity{name=entity.name, position=link_entity.position, direction=link_entity.direction, fast_replaceable=true, player=player_index}) -- works for paste, but not if entity has been upgraded
-			end
+			end]]
 		end
 	end
 end)
@@ -125,7 +125,6 @@ script.on_event(defines.events.on_robot_mined_entity, mark_lbn_for_deconstructio
  -- should also be called for .on_space_platform_mined_entity ?
 
 script.on_event(defines.events.on_cancelled_deconstruction, function(event) 
-	game.print(event.name) -- event id
 	local entity = event.entity
 	if entity and entity.valid then
         if entity.type == "linked-belt" then
@@ -140,14 +139,13 @@ script.on_event(defines.events.on_cancelled_deconstruction, function(event)
 end)
 
 --[[
+local upgrade_locks = {tick=nil, locked_entities={}}
 script.on_event(defines.events.on_marked_for_upgrade, function(event)
 	local entity = event.entity
 	if entity and entity.valid then
         if entity.type == "linked-belt" then
             local lbn = entity.linked_belt_neighbour
             if lbn then
-				game.print(i)
-				i = i + 1
 				local lbn_upgrade_target, lbn_upgrade_qual = lbn.get_upgrade_target()
 				local is_lbn_marked_for_upgrade = lbn.is_registered_for_upgrade()
 				local is_lbn_marked_for_upgrade = lbn.to_be_upgraded()

@@ -5,6 +5,7 @@ Date: 2024-11-09
     - Yodo
   Changes:
     - Will now add linked belts for almost all mods that add a new tier of underground. (Major code rework)
+    - Linked belts that are ready to connect will now be marked with a black sprite, instead of the previous red sprite
   Features:
     - Marking one of a pair of linked belts for deconstruction, or removing it, will mark the other side for deconstruction.
   Locale:

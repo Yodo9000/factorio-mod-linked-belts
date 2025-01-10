@@ -2,9 +2,11 @@
 Version: 0.1.0
 Date: 2024-11-09
   By:
-    - EMeindertsma
+    - Yodo
   Changes:
     - Will now add linked belts for almost all mods that add a new tier of underground. (Major code rework)
+  Features:
+    - Marking one of a pair of linked belts for deconstruction, or removing it, will mark the other side for deconstruction.
   Locale:
     - Added Dutch locale
   Graphics:
@@ -15,7 +17,7 @@ Date: 2024-11-09
 Version: 0.0.12
 Date: 2024-11-09
   By:
-    - EMeindertsma
+    - Yodo
   Changes:
     - Updated to base Factorio 2.0, other mods are not supported yet
     - Linked-belt graphics are bugged

@@ -18,7 +18,7 @@ script.on_event(defines.events.on_built_entity, function(event)
 			storage.players[player_index][name] = {}
 		end
 		
-		local handler = storage.players[player_index][name] -- unique for player and linked belt
+		local handler = storage.players[player_index][name] -- unique for player and linked belt tier
 		
 		if (handler.last_belt and handler.last_belt.valid) and not (entity.linked_belt_neighbour) then -- sometimes already linked 0_o
 			-- second linked belt
@@ -92,19 +92,68 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 	end
 end)
 
--- By heinwintoe
-script.on_event(defines.events.on_player_mined_entity, function(event) -- should also be called for .on_robot_mined_entity (and .on_space_platform_mined_entity?)
-    local player_index = event.player_index
-    local player = game.players[player_index]
-    local entity = player.selected
+-- By heinwintoe:
+local function mark_lbn_for_deconstruction(event)
+    local entity = event.entity
     if entity and entity.valid then
         if entity.type == "linked-belt" then
             local lbn = entity.linked_belt_neighbour
-            if lbn and lbn.surface == entity.surface then
+            if lbn then
                 --Mark linked belt neighbour for deconstruction
-                lbn.order_deconstruction(lbn.force, player)
+                lbn.order_deconstruction(lbn.force, event.player_index, 1)
             end
         end
     end
+end
 
+script.on_event(defines.events.on_player_mined_entity, mark_lbn_for_deconstruction) -- should also be called for .on_space_platform_mined_entity ?
+script.on_event(defines.events.on_marked_for_deconstruction, mark_lbn_for_deconstruction)
+script.on_event(defines.events.on_robot_mined_entity, mark_lbn_for_deconstruction) -- no player involved!
+
+script.on_event(defines.events.on_cancelled_deconstruction, function(event)
+	local entity = event.entity
+	if entity and entity.valid then
+        if entity.type == "linked-belt" then
+            local lbn = entity.linked_belt_neighbour
+            if lbn then
+                lbn.cancel_deconstruction(lbn.force, event.player_index)
+            end
+        end
+    end
 end)
+
+--[[
+script.on_event(defines.events.on_marked_for_upgrade, function(event)
+	local entity = event.entity
+	if entity and entity.valid then
+        if entity.type == "linked-belt" then
+            local lbn = entity.linked_belt_neighbour
+            if lbn then
+				game.print(i)
+				i = i + 1
+				local lbn_upgrade_target, lbn_upgrade_qual = lbn.get_upgrade_target()
+				local is_lbn_marked_for_upgrade = lbn.is_registered_for_upgrade()
+				local is_lbn_marked_for_upgrade = lbn.to_be_upgraded()
+				lbn_upgrade_target =  not is_lbn_marked_for_upgrade or lbn_upgrade_target.name -- will change to true if nil, but I don't think this matters
+				lbn_upgrade_qual   =  not is_lbn_marked_for_upgrade or lbn_upgrade_qual.name   -- will change to true if nil, but I don't think this matters
+				if lbn_upgrade_target ~= event.target.name and lbn_upgrade_qual ~= event.quality.name then
+            	    lbn.order_upgrade{target=event.target, force=lbn.force, player=event.player_index}
+				end
+            end
+        end
+    end
+end)
+
+script.on_event(defines.events.on_cancelled_upgrade , function(event)
+	local entity = event.entity
+	if entity and entity.valid then
+        if entity.type == "linked-belt" then
+            local lbn = entity.linked_belt_neighbour
+            if lbn and lbn.name == entity.name and lbn.quality == entity.quality then
+                lbn.cancel_upgrade(lbn.force, event.player_index)
+			else
+				lbn.order_upgrade{target=entity, force=lbn.force, player=event.player_index, item_index=0} -- in cases where lbn already been upgraded, order a downgrade
+			end
+        end
+    end
+end)]]

@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.3
+Date: 2025-01-11
+  By:
+    - Yodo
+  Features:
+    - Compatible with SchallBeltConfiguration and similar mods that modify belt speeds
+  Minor Features:
+    - Improved item ordering for 5dim_transport and similar mods
+  Info:
+    - Fixed changelog dates, it's 2025 now ;-)
+---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2025-01-11
   By:

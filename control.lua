@@ -9,22 +9,6 @@ local function draw_blocked(entity)
 	}
 end
 
-local function mark_lbn_for_deconstruction(event) -- By heinwintoe
-	--game.print(event.name) -- event id
-    local entity = event.entity
-    if entity and entity.valid then
-        if entity.type == "linked-belt" then
-            local lbn = entity.linked_belt_neighbour
-            if lbn then
-                --Mark linked belt neighbour for deconstruction
-                lbn.order_deconstruction(lbn.force, event.player_index)
-			else
-				draw_blocked(entity) --might be superfluous
-			end
-        end
-    end
-end
-
 script.on_init(function(data)
 	storage.players = {} --for storing mod data per player
 end)
@@ -34,18 +18,18 @@ script.on_event(defines.events.on_built_entity, function(event)
 	local entity = event.entity
 	local player_index = event.player_index
 	if entity.type == "linked-belt" then
-		
+
 		local name = entity.name
-		
+
 		if not storage.players[player_index] then
 			storage.players[player_index] = {}
 		end
 		if not storage.players[player_index][name] then
 			storage.players[player_index][name] = {}
 		end
-		
+
 		local handler = storage.players[player_index][name] -- unique for player and linked belt tier
-		
+
 		if handler.last_belt and handler.last_belt.valid and not entity.linked_belt_neighbour then -- sometimes already linked 0_o
 			-- second linked belt
 			handler.last_belt.linked_belt_type = "input"
@@ -119,6 +103,22 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 	end
 end)
 
+local function mark_lbn_for_deconstruction(event) -- By heinwintoe
+	--game.print(event.name) -- event id
+    local entity = event.entity
+    if entity and entity.valid then
+        if entity.type == "linked-belt" then
+            local lbn = entity.linked_belt_neighbour
+            if lbn then
+                --Mark linked belt neighbour for deconstruction
+                lbn.order_deconstruction(lbn.force, event.player_index, 0)
+			else
+				draw_blocked(entity) --might be superfluous
+			end
+        end
+    end
+end
+
 script.on_event(defines.events.on_player_mined_entity, mark_lbn_for_deconstruction) -- doesn't undo properly
 script.on_event(defines.events.on_marked_for_deconstruction, mark_lbn_for_deconstruction)
 script.on_event(defines.events.on_robot_mined_entity, mark_lbn_for_deconstruction) -- doesn't undo properly, no player involved!
@@ -138,28 +138,27 @@ script.on_event(defines.events.on_cancelled_deconstruction, function(event)
     end
 end)
 
---[[
-local upgrade_locks = {tick=nil, locked_entities={}}
+--[[local upgrade_locks = {tick=nil, locked_entities={}} -- to store which entities have already been upgraded for a certain tick, data can be overwritten on later ticks
 script.on_event(defines.events.on_marked_for_upgrade, function(event)
 	local entity = event.entity
 	if entity and entity.valid then
         if entity.type == "linked-belt" then
             local lbn = entity.linked_belt_neighbour
             if lbn then
-				local lbn_upgrade_target, lbn_upgrade_qual = lbn.get_upgrade_target()
-				local is_lbn_marked_for_upgrade = lbn.is_registered_for_upgrade()
-				local is_lbn_marked_for_upgrade = lbn.to_be_upgraded()
-				lbn_upgrade_target =  not is_lbn_marked_for_upgrade or lbn_upgrade_target.name -- will change to true if nil, but I don't think this matters
-				lbn_upgrade_qual   =  not is_lbn_marked_for_upgrade or lbn_upgrade_qual.name   -- will change to true if nil, but I don't think this matters
-				if lbn_upgrade_target ~= event.target.name and lbn_upgrade_qual ~= event.quality.name then
+				if upgrade_locks.tick ~= event.tick then
+					upgrade_locks.locked_entities = {} -- clear table
+					upgrade_locks.tick = event.tick
+				end
+				if not upgrade_locks.locked_entities[lbn] then -- calls on_cancelled_upgrade if false
+					upgrade_locks.locked_entities[lbn] = true -- store entity as key to check its presence more easily, bascially a set in lua
             	    lbn.order_upgrade{target=event.target, force=lbn.force, player=event.player_index}
 				end
             end
         end
     end
-end)
-
-script.on_event(defines.events.on_cancelled_upgrade , function(event)
+end)]]
+--[[
+script.on_event(defines.events.on_cancelled_upgrade , function(event) -- cancelled upgrades or downgrades
 	local entity = event.entity
 	if entity and entity.valid then
         if entity.type == "linked-belt" then

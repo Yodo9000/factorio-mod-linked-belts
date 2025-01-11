@@ -34,7 +34,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
       icon_size = 64,
       icons = prototype_copy.icons,
       subgroup = data.raw.item[prototype.name].subgroup or prototype_copy.subgroup or "belt",
-      order = "e"..string.char(table_size(speeds) + byte_0), -- convert uint to letter in alphabetic order
+      order = "l"..string.char(table_size(speeds) + byte_0), -- convert uint to letter in alphabetic order
       place_result = prototype_copy.name,
       stack_size = 10,
     }

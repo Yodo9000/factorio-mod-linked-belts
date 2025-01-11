@@ -12,7 +12,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
     prototype_copy.minable.result = prototype_copy.name
     prototype_copy.fast_replaceable_group = "linked-belt"
     if prototype.next_upgrade then
-      prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade -- doesn't replace other side of the link though
+      prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade
     end
     prototype_copy.localised_name = {"entity-name.linked-belts", {"entity-name."..prototype.name}} -- has extra capitalisation
     for _, sprite_4_way in pairs(prototype_copy.structure) do -- should maybe be a bit more general to deal with differently defined sprites

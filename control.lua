@@ -13,6 +13,10 @@ script.on_init(function(data)
 	storage.players = {} --for storing mod data per player
 end)
 
+local function print(string)
+	game.print(string, {skip=defines.print_skip.never}) --only prints once per tick by defualt
+end
+
 
 script.on_event(defines.events.on_built_entity, function(event)
 	local entity = event.entity
@@ -64,12 +68,12 @@ script.on_event(defines.events.on_built_entity, function(event)
 				tint = {b=1} -- to mark that it is ready to link
 			}
 		else --[[ fast replace or upgrade or instant-blueprint-building
-			game.print('fast replace or upgrade or paste')
-			game.print(entity.name)
-			game.print(entity.linked_belt_neighbour.name)
+			print('fast replace or upgrade or paste')
+			print(entity.name)
+			print(entity.linked_belt_neighbour.name)
 			local link_entity = entity.linked_belt_neighbour
 			if link_entity.name ~= entity.name then
-				game.print(link_entity.surface.create_entity{name=entity.name, position=link_entity.position, direction=link_entity.direction, fast_replaceable=true, player=player_index}) -- works for paste, but not if entity has been upgraded
+				print(link_entity.surface.create_entity{name=entity.name, position=link_entity.position, direction=link_entity.direction, fast_replaceable=true, player=player_index}) -- works for paste, but not if entity has been upgraded
 			end]]
 		end
 	end
@@ -104,7 +108,7 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 end)
 
 local function mark_lbn_for_deconstruction(event) -- By heinwintoe
-	--game.print(event.name) -- event id
+	--print(event.name) -- event id
     local entity = event.entity
     if entity and entity.valid then
         if entity.type == "linked-belt" then
@@ -137,9 +141,9 @@ script.on_event(defines.events.on_cancelled_deconstruction, function(event)
         end
     end
 end)
-
---[[local upgrade_locks = {tick=nil, locked_entities={}} -- to store which entities have already been upgraded for a certain tick, data can be overwritten on later ticks
-script.on_event(defines.events.on_marked_for_upgrade, function(event)
+--[[
+local upgrade_locks = {tick=nil, locked_entities={}} -- to store which entities have already been upgraded for a certain tick, not shared with other players! Data can be overwritten on later ticks. Won't work as desired if the game speed is 0.
+script.on_event(defines.events.on_marked_for_upgrade, function(event) --doesn't undo properly
 	local entity = event.entity
 	if entity and entity.valid then
         if entity.type == "linked-belt" then
@@ -147,26 +151,31 @@ script.on_event(defines.events.on_marked_for_upgrade, function(event)
             if lbn then
 				if upgrade_locks.tick ~= event.tick then
 					upgrade_locks.locked_entities = {} -- clear table
+					print("clear upgrade locks")
 					upgrade_locks.tick = event.tick
 				end
-				if not upgrade_locks.locked_entities[lbn] then -- calls on_cancelled_upgrade if false
-					upgrade_locks.locked_entities[lbn] = true -- store entity as key to check its presence more easily, bascially a set in lua
-            	    lbn.order_upgrade{target=event.target, force=lbn.force, player=event.player_index}
+				if not upgrade_locks.locked_entities[lbn.unit_number] then -- calls on_cancelled_upgrade if false
+					upgrade_locks.locked_entities[lbn.unit_number] = true -- store unit_number as key to check its presence more easily, bascially a set in lua
+					print(string.format("upgrade %s", lbn.unit_number))
+            	    lbn.order_upgrade{target=event.target, force=lbn.force, player=event.player_index, item_index=0}
+				else
+					print(string.format("upgrade %s deferred", lbn.unit_number))
 				end
-            end
+           end -- if a linked pair is marked for upgrade by a planner, the one with the lower unit number will get a double order, even though the code above will only call it once
         end
     end
-end)]]
---[[
-script.on_event(defines.events.on_cancelled_upgrade , function(event) -- cancelled upgrades or downgrades
+end)
+
+script.on_event(defines.events.on_cancelled_upgrade , function(event) -- cancelled (upgrades or downgrades), or just before a different upgrade is ordered to an entity already requesting an upgrade
+	print("on_cancelled_upgrade")
 	local entity = event.entity
 	if entity and entity.valid then
         if entity.type == "linked-belt" then
             local lbn = entity.linked_belt_neighbour
             if lbn and lbn.name == entity.name and lbn.quality == entity.quality then
-                lbn.cancel_upgrade(lbn.force, event.player_index)
+                --lbn.cancel_upgrade(lbn.force, event.player_index)
 			else
-				lbn.order_upgrade{target=entity, force=lbn.force, player=event.player_index, item_index=0} -- in cases where lbn already been upgraded, order a downgrade
+				--lbn.order_upgrade{target=entity, force=lbn.force, player=event.player_index, item_index=0} -- in cases where lbn already been upgraded, order a downgrade
 			end
         end
     end

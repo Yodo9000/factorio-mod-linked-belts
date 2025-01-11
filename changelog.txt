@@ -5,8 +5,8 @@ Date: 2024-11-10
     - Yodo
   Changes:
     - Will now only add one new linked belt for each speed (5dim_transport)
-  Planned changes:
-    - sync upgrades for linked belt pairs
+  Bugfixes:
+    - Potentially fixed a bug (Github issue 2)
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2024-11-10

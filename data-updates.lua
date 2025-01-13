@@ -24,14 +24,14 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
         icon.tint = tint
       end
     else
-      prototype_copy.icons = {{icon=prototype.icon, tint=tint}}
+      prototype_copy.icons = {{icon=prototype.icon, tint=tint, icon_size=prototype.icon_size}}
       prototype_copy.icon = nil
     end
 
     local item = {
       type = "item",
       name = prototype_copy.name,
-      icon_size = 64,
+      --icon_size = 64,
       icons = prototype_copy.icons,
       subgroup = data.raw.item[prototype.name].subgroup or prototype_copy.subgroup or "belt",
       order = "l"..string.char(table_size(speeds) + byte_0), -- convert uint to letter in alphabetic order

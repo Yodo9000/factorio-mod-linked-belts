@@ -1,20 +1,26 @@
 local byte_0 = string.byte("a")-1
 local tint = {0.65, 0.65, 0.65} -- to recolor the items and entities
-local speeds = {} -- to not make multiple with the same speed, store as a set
+local speeds_names = {} -- to not make multiple with the same speed, store the name so that it can be iterated over later
+local speeds = {} -- store all the speeds so that they can be sorted (keys cannot be sorted in lua)
 
 for _, prototype in pairs(data.raw["underground-belt"]) do
-  if not speeds[prototype.speed] then -- can cause crashes if two other mods define ug belts with the same speed, but I think a crash is better than deleting entities
-    speeds[prototype.speed] = true
+  if not speeds_names[prototype.speed] then
+    table.insert(speeds, prototype.speed)
     local prototype_copy = util.table.deepcopy(prototype)
+
     prototype_copy.type = "linked-belt"
     prototype_copy.name = "linked-"..prototype.name
+    speeds_names[prototype.speed] = prototype_copy.name
+
     prototype_copy.hidden_in_factoriopedia = true -- I'm not sure if this works. Need to change description etc if visible in Factoriopedia
     prototype_copy.minable.result = prototype_copy.name
     prototype_copy.fast_replaceable_group = "linked-belt"
-    if prototype.next_upgrade then
-      prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade
-    end
     prototype_copy.localised_name = {"entity-name.linked-belts", {"entity-name."..prototype.name}} -- has extra capitalisation
+
+    if prototype.next_upgrade then
+      prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade -- can cause a loading error if this entity is not added due to matching speed
+    end
+
     for _, sprite_4_way in pairs(prototype_copy.structure) do -- should maybe be a bit more general to deal with differently defined sprites
       sprite_4_way.sheet.tint = tint
     end
@@ -34,7 +40,7 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
       --icon_size = 64,
       icons = prototype_copy.icons,
       subgroup = data.raw.item[prototype.name].subgroup or prototype_copy.subgroup or "belt",
-      order = "l"..string.char(table_size(speeds) + byte_0), -- convert uint to letter in alphabetic order
+      --order is set later (some mods add the belts in a weird order, so sorting is needed)
       place_result = prototype_copy.name,
       stack_size = 10,
     }
@@ -61,4 +67,12 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
       end
     end
   end
+end
+
+table.sort(speeds)
+local _, prev_speed = next(speeds)-- to store the speed of the entity that needs to be upgraded
+for i, speed in pairs(speeds) do
+  data.raw.item[speeds_names[speed]].order = "l"..string.char(i + byte_0) -- convert uint to letter in alphabetic order
+  --data.raw["linked-belt"][speeds_names[prev_speed]].next_upgrade = speeds_names[speed] -- can avert loading errors due to belts with matching speeds, but this can cause migration problems (i.e. the mod loading order changes and which belt is skipped changes). I could have avoided the migration problems if the linked belt entities had names based only on their speed, but doing this now requires a double migration.
+  prev_speed = speed
 end

@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2025-01-20
+  By:
+    - Yodo
+  Bugfixes:
+    - Improved item ordering for some mods (UltimateBeltsSpaceAge)
+    - Improved linked belt upgrading for some mods (UltimateBeltsSpaceAge)
+---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2025-01-13
   By:

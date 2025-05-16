@@ -1,3 +1,7 @@
+local ENTITY_FILTER = {
+	{ filter = "type", type = "linked-belt" }
+}
+
 local function draw_blocked(entity)
 	return rendering.draw_sprite{
 		target=entity,
@@ -9,6 +13,23 @@ local function draw_blocked(entity)
 	}
 end
 
+local function max_distance(pos1, pos2)
+	return math.max(math.abs(pos2.x - pos1.x), math.abs(pos2.y - pos1.y))
+end
+
+local function mark_lbn_for_deconstruction(event) -- By heinwintoe
+    local entity = event.entity
+    if entity and entity.valid then
+		local lbn = entity.linked_belt_neighbour
+		if lbn then
+			--Mark linked belt neighbour for deconstruction
+			lbn.order_deconstruction(lbn.force, event.player_index, 0)
+		else
+			draw_blocked(entity) --might be superfluous
+		end
+    end
+end
+
 script.on_init(function(data)
 	storage.players = {} --for storing mod data per player
 end)
@@ -17,67 +38,86 @@ local function print(string)
 	game.print(string, {skip=defines.print_skip.never}) --only prints once per tick by defualt
 end
 
+local function get_range(entity)
+	local range = settings.global["lb-"..entity.name.."-range"].value
+	return range
+end
 
 script.on_event(defines.events.on_built_entity, function(event)
 	local entity = event.entity
 	local player_index = event.player_index
-	if entity.type == "linked-belt" then
+	local player = game.players[player_index]
+	local name = entity.name
 
-		local name = entity.name
-
-		if not storage.players[player_index] then
-			storage.players[player_index] = {}
-		end
-		if not storage.players[player_index][name] then
-			storage.players[player_index][name] = {}
-		end
-
-		local handler = storage.players[player_index][name] -- unique for player and linked belt tier
-
-		if handler.last_belt and handler.last_belt.valid and not entity.linked_belt_neighbour then -- sometimes already linked 0_o
-			-- second linked belt
-			handler.last_belt.linked_belt_type = "input"
-			entity.linked_belt_type = "output"
-			entity.connect_linked_belts(handler.last_belt)
-			handler.render_obj.destroy() -- destroy the warning that the linked-belt is not linked yet.
-			if entity.surface == handler.last_belt.surface then
-				rendering.draw_line{
-					color={1,1,1},
-					width=1,
-					from=handler.last_belt,
-					to=entity,
-					surface=entity.surface,
-					time_to_live=600,
-					forces={entity.force.name},
-					only_in_alt_mode=true
-				}
-			end
-			handler.last_belt=nil
-			handler.render_obj=nil
-		elseif not entity.linked_belt_neighbour then
-			-- first linked belt
-			entity.linked_belt_type = "input"
-			handler.last_belt = entity
-			handler.render_obj = rendering.draw_sprite{
-				target=entity,
-				sprite="utility/crafting_machine_recipe_not_unlocked",
-				surface=entity.surface,
-				forces={entity.force.name},
-				only_in_alt_mode=true,
-				x_scale=0.6, y_scale=0.6,
-				tint = {b=1} -- to mark that it is ready to link
-			}
-		else --[[ fast replace or upgrade or instant-blueprint-building
-			print('fast replace or upgrade or paste')
-			print(entity.name)
-			print(entity.linked_belt_neighbour.name)
-			local link_entity = entity.linked_belt_neighbour
-			if link_entity.name ~= entity.name then
-				print(link_entity.surface.create_entity{name=entity.name, position=link_entity.position, direction=link_entity.direction, fast_replaceable=true, player=player_index}) -- works for paste, but not if entity has been upgraded
-			end]]
-		end
+	if not storage.players[player_index] then
+		storage.players[player_index] = {}
 	end
-end)
+	if not storage.players[player_index][name] then
+		storage.players[player_index][name] = {}
+	end
+
+	local handler = storage.players[player_index][name] -- unique for player and linked belt tier
+
+	if handler.last_belt and handler.last_belt.valid and not entity.linked_belt_neighbour then -- sometimes already linked 0_o
+		local fail_placement = false
+		if settings.global["lb-linked-belts-same-surface"].value and entity.surface ~= handler.last_belt.surface then
+			player.create_local_flying_text({text={"linked-belts.lb-same-surface"}, color={1,1,1}, surface=entity.surface, position=entity.position})
+			fail_placement = true
+		end
+
+		local distance = max_distance(entity.position, handler.last_belt.position)
+		if distance > get_range(entity) then
+			player.create_local_flying_text({text={"linked-belts.lb-too-far", get_range(entity)}, color={1,1,1}, surface=entity.surface, position=entity.position})
+			fail_placement = true
+		end
+
+		if fail_placement then
+			entity.order_deconstruction(entity.force, player_index, 0)
+			return
+		end
+
+		-- second linked belt
+		handler.last_belt.linked_belt_type = "input"
+		entity.linked_belt_type = "output"
+		entity.connect_linked_belts(handler.last_belt)
+		handler.render_obj.destroy() -- destroy the warning that the linked-belt is not linked yet.
+		if entity.surface == handler.last_belt.surface then
+			rendering.draw_line{
+				color={1,1,1},
+				width=1,
+				from=handler.last_belt,
+				to=entity,
+				surface=entity.surface,
+				time_to_live=600,
+				forces={entity.force.name},
+				only_in_alt_mode=true
+			}
+		end
+		handler.last_belt=nil
+		handler.render_obj=nil
+	elseif not entity.linked_belt_neighbour then
+		-- first linked belt
+		entity.linked_belt_type = "input"
+		handler.last_belt = entity
+		handler.render_obj = rendering.draw_sprite{
+			target=entity,
+			sprite="utility/crafting_machine_recipe_not_unlocked",
+			surface=entity.surface,
+			forces={entity.force.name},
+			only_in_alt_mode=true,
+			x_scale=0.6, y_scale=0.6,
+			tint = {b=1} -- to mark that it is ready to link
+		}
+	else --[[ fast replace or upgrade or instant-blueprint-building
+		print('fast replace or upgrade or paste')
+		print(entity.name)
+		print(entity.linked_belt_neighbour.name)
+		local link_entity = entity.linked_belt_neighbour
+		if link_entity.name ~= entity.name then
+			print(link_entity.surface.create_entity{name=entity.name, position=link_entity.position, direction=link_entity.direction, fast_replaceable=true, player=player_index}) -- works for paste, but not if entity has been upgraded
+		end]]
+	end
+end, ENTITY_FILTER)
 
 script.on_event(defines.events.on_selected_entity_changed, function(event)
 --Called after the selected entity changes for a given player.
@@ -107,39 +147,22 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 	end
 end)
 
-local function mark_lbn_for_deconstruction(event) -- By heinwintoe
-    local entity = event.entity
-    if entity and entity.valid then
-        if entity.type == "linked-belt" then
-            local lbn = entity.linked_belt_neighbour
-            if lbn then
-                --Mark linked belt neighbour for deconstruction
-                lbn.order_deconstruction(lbn.force, event.player_index, 0)
-			else
-				draw_blocked(entity) --might be superfluous
-			end
-        end
-    end
-end
-
-script.on_event(defines.events.on_player_mined_entity, mark_lbn_for_deconstruction) -- doesn't undo properly
-script.on_event(defines.events.on_marked_for_deconstruction, mark_lbn_for_deconstruction)
-script.on_event(defines.events.on_robot_mined_entity, mark_lbn_for_deconstruction) -- doesn't undo properly, no player involved!
+script.on_event(defines.events.on_player_mined_entity, mark_lbn_for_deconstruction, ENTITY_FILTER) -- doesn't undo properly
+script.on_event(defines.events.on_marked_for_deconstruction, mark_lbn_for_deconstruction, ENTITY_FILTER)
+script.on_event(defines.events.on_robot_mined_entity, mark_lbn_for_deconstruction, ENTITY_FILTER) -- doesn't undo properly, no player involved!
  -- should also be called for .on_space_platform_mined_entity ?
 
 script.on_event(defines.events.on_cancelled_deconstruction, function(event)
 	local entity = event.entity
 	if entity and entity.valid then
-        if entity.type == "linked-belt" then
-            local lbn = entity.linked_belt_neighbour
-            if lbn then
-                lbn.cancel_deconstruction(lbn.force, event.player_index)
-			else
-				draw_blocked(entity)
-            end
-        end
+		local lbn = entity.linked_belt_neighbour
+		if lbn then
+			lbn.cancel_deconstruction(lbn.force, event.player_index)
+		else
+			draw_blocked(entity)
+		end
     end
-end)
+end, ENTITY_FILTER)
 
 --[[local upgrade_locks = {tick=nil, locked_entities={}} -- to store which entities have already been upgraded for a certain tick, not shared with other players! Data can be overwritten on later ticks. Won't work as desired if the game speed is 0.
 script.on_event(defines.events.on_marked_for_upgrade, function(event) --doesn't undo properly

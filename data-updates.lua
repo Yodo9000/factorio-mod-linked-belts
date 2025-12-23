@@ -21,8 +21,13 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
       prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade -- can cause a loading error if this entity is not added due to matching speed
     end
 
-    for _, sprite_4_way in pairs(prototype_copy.structure) do
-      for _, property in pairs({"sheets", "sheet", "north", "east", "south", "west"}) do -- sprites can be defined in multiple ways
+    for _, sprite_4_way in pairs(prototype_copy.structure) do -- sprites can be defined in three different ways
+      if sprite_4_way.sheets then
+        for _, sheet in pairs(sprite_4_way.sheets) do
+          sheet.tint = tint
+        end
+      end
+      for _, property in pairs({"sheet", "north", "east", "south", "west"}) do
         if sprite_4_way[property] then
           sprite_4_way[property].tint = tint
         end
@@ -77,6 +82,6 @@ table.sort(speeds)
 local _, prev_speed = next(speeds)-- to store the speed of the entity that needs to be upgraded
 for i, speed in pairs(speeds) do
   data.raw.item[speeds_names[speed]].order = "l"..string.char(i + byte_0) -- convert uint to letter in alphabetic order
-  --data.raw["linked-belt"][speeds_names[prev_speed]].next_upgrade = speeds_names[speed] -- can avert loading errors due to belts with matching speeds, but this can cause migration problems (i.e. the mod loading order changes and which belt is skipped changes). I could have avoided the migration problems if the linked belt entities had names based only on their speed, but doing this now requires a double migration.
+  --data.raw["linked-belt"][speeds_names[prev_speed]].next_upgrade = speeds_names[speed] -- can avert loading errors due to belts with matching speeds, but this can cause migration problems (i.e. the mod loading order changes and which belt is skipped changes). I could have avoided the migration problems if the linked belt entities had names based only on their speed, but doing this now requires a lua migration.
   prev_speed = speed
 end

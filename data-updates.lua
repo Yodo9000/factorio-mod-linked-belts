@@ -21,8 +21,12 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
       prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade -- can cause a loading error if this entity is not added due to matching speed
     end
 
-    for _, sprite_4_way in pairs(prototype_copy.structure) do -- should maybe be a bit more general to deal with differently defined sprites
-      sprite_4_way.sheet.tint = tint
+    for _, sprite_4_way in pairs(prototype_copy.structure) do
+      for _, property in pairs({"sheets", "sheet", "north", "east", "south", "west"}) do -- sprites can be defined in multiple ways
+        if sprite_4_way[property] then
+          sprite_4_way[property].tint = tint
+        end
+      end
     end
     -- need to tint entity icon for upgrade planners:
     if prototype.icons then

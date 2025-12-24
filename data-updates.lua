@@ -3,6 +3,17 @@ local tint = {0.65, 0.65, 0.65} -- to recolor the items and entities
 local speeds_names = {} -- to not make multiple with the same speed, store the name so that it can be iterated over later
 local speeds = {} -- store all the speeds so that they can be sorted (keys cannot be sorted in lua)
 
+local function multiply_table(table1, table2) -- multiply the values in the first table with corresponding values from the second table in place. Does not error if table1 is nil.
+  if table1 then
+    for i, value in pairs(table1) do
+      table1[i] = value*table2[i]
+    end
+    return table1
+  else
+    return nil
+  end
+end
+
 for _, prototype in pairs(data.raw["underground-belt"]) do
   if not speeds_names[prototype.speed] then
     table.insert(speeds, prototype.speed)
@@ -18,25 +29,25 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
     prototype_copy.localised_name = {"entity-name.linked-belts", {"entity-name."..prototype.name}} -- has extra capitalisation
 
     if prototype.next_upgrade then
-      prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade -- can cause a loading error if this entity is not added due to matching speed
+      prototype_copy.next_upgrade = "linked-"..prototype.next_upgrade -- can cause a loading error if the upgrade entity is not added due to matching speed
     end
 
     for _, sprite_4_way in pairs(prototype_copy.structure) do -- sprites can be defined in three different ways
       if sprite_4_way.sheets then
         for _, sheet in pairs(sprite_4_way.sheets) do
-          sheet.tint = tint
+          sheet.tint = multiply_table(sheet.tint, tint) or tint
         end
       end
       for _, property in pairs({"sheet", "north", "east", "south", "west"}) do
         if sprite_4_way[property] then
-          sprite_4_way[property].tint = tint
+          sprite_4_way[property].tint = multiply_table(sprite_4_way[property].tint, tint) or tint
         end
       end
     end
     -- need to tint entity icon for upgrade planners:
     if prototype.icons then
       for _, icon in pairs(prototype_copy.icons) do
-        icon.tint = tint
+        icon.tint = multiply_table(icon.tint, tint) or tint
       end
     else
       prototype_copy.icons = {{icon=prototype.icon, tint=tint, icon_size=prototype.icon_size}}

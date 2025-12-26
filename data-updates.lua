@@ -1,8 +1,3 @@
-local byte_0 = string.byte("a")-1
-local tint = {0.65, 0.65, 0.65, 1} -- to recolor the items and entities, include transparency for multiplication
-local speeds_names = {} -- to not make multiple with the same speed, store the name so that it can be iterated over later
-local speeds = {} -- store all the speeds so that they can be sorted (keys cannot be sorted in lua)
-
 local function multiply_table(table1, table2) -- multiply the values in the first table with corresponding values from the second table in place. Does not error if table1 is nil.
   if table1 then
     for i, value in pairs(table1) do
@@ -13,6 +8,16 @@ local function multiply_table(table1, table2) -- multiply the values in the firs
     return nil
   end
 end
+
+local byte_0 = string.byte("a")-1
+local tint = {0.65, 0.65, 0.65, 1} -- to recolor the items and entities, include transparency for multiplication
+local speeds_names = {} -- to not make multiple with the same speed, store the name so that it can be iterated over later
+local speeds = {} -- store all the speeds so that they can be sorted (keys cannot be sorted in lua)
+
+for i, key in ipairs({"r", "g", "b", "a"}) do -- otherwise errors when multiplying 'rgba'-tints with '1234'-tints
+  tint[key] = tint[i]
+end
+
 
 for _, prototype in pairs(data.raw["underground-belt"]) do
   if not speeds_names[prototype.speed] then

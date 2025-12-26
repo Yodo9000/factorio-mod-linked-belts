@@ -1,5 +1,5 @@
 local byte_0 = string.byte("a")-1
-local tint = {0.65, 0.65, 0.65} -- to recolor the items and entities
+local tint = {0.65, 0.65, 0.65, 1} -- to recolor the items and entities, include transparency for multiplication
 local speeds_names = {} -- to not make multiple with the same speed, store the name so that it can be iterated over later
 local speeds = {} -- store all the speeds so that they can be sorted (keys cannot be sorted in lua)
 

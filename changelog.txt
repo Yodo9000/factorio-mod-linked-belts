@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.12
+Date: 2026-01-01
+  By:
+    - Yodo
+  Compatibility:
+    - Added a startup setting that allows LinkedBelts to work if loaded with mods that are incompatible with each other (Can cause linked belts to disappear if those mods are updated!)
+---------------------------------------------------------------------------------------------------
 Version: 0.1.11
 Date: 2025-12-26
   By:

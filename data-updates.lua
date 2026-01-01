@@ -94,10 +94,12 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
   end
 end
 
-table.sort(speeds)
-local _, prev_speed = next(speeds)-- to store the speed of the entity that needs to be upgraded
+table.sort(speeds) -- makes the table start at 1
+local prev_speed = speeds[1]-- to store the speed of the entity that needs to be upgraded, use local so that the value in the table is not changed
 for i, speed in pairs(speeds) do
   data.raw.item[speeds_names[speed]].order = "l"..string.char(i + byte_0) -- convert uint to letter in alphabetic order
-  --data.raw["linked-belt"][speeds_names[prev_speed]].next_upgrade = speeds_names[speed] -- can avert loading errors due to belts with matching speeds, but this can cause migration problems (i.e. the mod loading order changes and which belt is skipped changes). I could have avoided the migration problems if the linked belt entities had names based only on their speed, but doing this now requires a lua migration.
+  if settings.startup["lb-linked-belts-setting-force-compatibility"].value then
+    data.raw["linked-belt"][speeds_names[prev_speed]].next_upgrade = speeds_names[speed] -- can avert loading errors due to belts with matching speeds, but this can cause migration problems (i.e. the mod loading order changes and which belt is skipped changes). Problems can be decreased by migrating to names based on tier, but this requires a lua migration.
+  end
   prev_speed = speed
 end

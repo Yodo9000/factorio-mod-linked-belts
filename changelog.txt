@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.14
+Date: 2026-03-21
+  By:
+    - Yodo
+  Bugfixes:
+    - Fixed crash introduced by previous version.
+    - Ghost linked belts will also show connections on hower now.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.13
 Date: 2026-03-21
   By:

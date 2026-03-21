@@ -9,19 +9,23 @@ local function draw_blocked(entity)
 	}
 end
 
-script.on_init(function(data)
-	storage.players = {} --for storing mod data per player
-end)
+local function is_linked_belt_or_ghost_linked_belt(entity)
+	return entity.type == "linked-belt" or (entity.name == "entity-ghost" and entity.ghost_type == "linked-belt") -- entity.status is sometimes/always nil for ghosts
+end
 
 local function print(string)
 	game.print(string, {skip=defines.print_skip.never}) -- change default to always print, instead of only once per tick
 end
 
+script.on_init(function(data)
+	storage.players = {} --for storing mod data per player
+end)
+
 
 script.on_event(defines.events.on_built_entity, function(event)
 	local entity = event.entity
 	local player_index = event.player_index
-	if entity.type == "linked-belt" or entity.ghost_type == "linked-belt"then
+	if is_linked_belt_or_ghost_linked_belt(entity) then
 
 		local name = entity.name
 
@@ -89,7 +93,7 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 	local player = game.players[player_index]
 	local entity = player.selected
 	if entity and entity.valid then
-		if entity.type == "linked-belt" then
+		if is_linked_belt_or_ghost_linked_belt(entity) then
 			local lbn = entity.linked_belt_neighbour
 			if lbn and lbn.surface == entity.surface then
 				rendering.draw_line{

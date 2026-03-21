@@ -14,14 +14,14 @@ script.on_init(function(data)
 end)
 
 local function print(string)
-	game.print(string, {skip=defines.print_skip.never}) --only prints once per tick by defualt
+	game.print(string, {skip=defines.print_skip.never}) -- change default to always print, instead of only once per tick
 end
 
 
 script.on_event(defines.events.on_built_entity, function(event)
 	local entity = event.entity
 	local player_index = event.player_index
-	if entity.type == "linked-belt" then
+	if entity.type == "linked-belt" or entity.ghost_type == "linked-belt"then
 
 		local name = entity.name
 
@@ -145,7 +145,7 @@ end)
 script.on_event(defines.events.on_marked_for_upgrade, function(event) --doesn't undo properly
 	local entity = event.entity
 	if entity and entity.valid then
-        if entity.type == "linked-belt" then
+        if entity.type == "linked-belt" then -- I might also need to support ghost linked belts
             local lbn = entity.linked_belt_neighbour
             if lbn then
 				if upgrade_locks.tick ~= event.tick then
@@ -173,7 +173,7 @@ script.on_event(defines.events.on_cancelled_upgrade , function(event) -- cancell
 	local entity = event.entity
 	if entity and entity.valid then
 		print(string.format("on_cancelled_upgrade: %s", entity.unit_number))
-        if entity.type == "linked-belt" then
+        if entity.type == "linked-belt" then -- I might also need to support ghost linked belts
             local lbn = entity.linked_belt_neighbour
 			if lbn then
 				local entity_up_ent, entity_up_qual = entity.get_upgrade_target()

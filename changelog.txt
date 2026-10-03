@@ -1,4 +1,32 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.1
+Date: 2026-08-26
+  By:
+    - darkfrei
+  Features:
+    - Added a setting for the maximal distance between the two belts of a pair, off by default. A belt placed out of range does not link, it waits for a partner of its own instead and says so. Suggested by Dragonchampion, the behaviour follows the thread.
+    - Added a setting that keeps a pair on one surface, off by default. Linking a planet to a space platform or to another planet can be turned off with it.
+  Bugfixes:
+    - Fixed a loading error when another mod adds an underground belt without minable properties.
+    - Fixed a loading error when the item that places an underground belt has a different name than the entity.
+    - Fixed the "Entity missing" loading error caused by upgrade targets that point at a skipped belt tier. Upgrade targets are resolved to the linked belt of the matching speed now, so the compatibility setting is no longer needed for that case.
+    - Fixed that the linked belt with the lowest speed could get itself as an upgrade target when the compatibility setting was enabled, and that the fastest one could keep a dangling target.
+    - Fixed that ghost linked belts of different tiers could be linked to each other, they all share the name entity-ghost.
+    - Fixed a crash when the marker sprite of a waiting linked belt was already gone.
+    - Fixed that the "not linked" marker sprite was drawn permanently and stacked up on every cancelled deconstruction.
+    - Fixed that recipe unlocks were not copied when another mod renames the underground belt recipe.
+  Changes:
+    - Which belt tier is used when two mods add undergrounds of the same speed no longer depends on the mod loading order.
+    - Item order is no longer limited to 26 belt tiers, and linked belts inherit the stack size of the underground belt they are made from.
+    - Deconstruction of the linked neighbour also follows entities mined on space platforms.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2026-08-20
+  By:
+    - Khalcifer
+  Changes:
+    - Updated to 2.1
+---------------------------------------------------------------------------------------------------
 Version: 0.1.14
 Date: 2026-03-21
   By:

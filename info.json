@@ -1,6 +1,6 @@
 {
   "name": "LinkedBelts",
-  "version": "0.1.14",
+  "version": "2.1.1",
   
   "title": "Linked Belts",
   "description": "Quantum connection between linked belts",
@@ -8,6 +8,6 @@
   "author": "darkfrei",
   "license": "MIT",
   
-  "dependencies": ["base >= 2.0.20"],
-  "factorio_version": "2.0"
+  "dependencies": ["base >= 2.1.0"],
+  "factorio_version": "2.1"
 }
